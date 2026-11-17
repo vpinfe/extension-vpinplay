@@ -1,0 +1,19 @@
+{
+  "name": "vpinplay",
+  "display_name": "VPinPlay",
+  "version": "1.0.0",
+  "author": "VPinFE",
+  "home": "https://github.com/vpinfe/extension-vpinplay",
+  "source": "https://github.com/vpinfe/extension-vpinplay",
+  "picture": "logo.png",
+  "requires_platform": 1,
+  "scopes": [
+    "games:read",
+    "players:read"
+  ],
+  "capabilities": [
+    "net:outbound",
+    "config:own",
+    "ui:mount"
+  ]
+}
