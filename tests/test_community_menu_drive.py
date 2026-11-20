@@ -276,8 +276,8 @@ class CommunityMenuDrive(unittest.TestCase):
         self.assertIn("Enabled", fields)
 
     def test_a_reload_keeps_it(self) -> None:
-        self.assertEqual(self.seen["reloaded"],
-                         ["VPinPlay", "?view=extensions&section=extension_details&extension=vpinplay"])
+        self.assertEqual(self.seen["reloaded"], [
+            "VPinPlay", "?view=extensions&section=extension_details&extension=vpinplay"])
 
     # -- the line ------------------------------------------------------------------
 
