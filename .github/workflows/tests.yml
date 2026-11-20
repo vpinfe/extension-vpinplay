@@ -1,0 +1,65 @@
+name: Tests
+
+# This extension is tested inside a VPinFE checkout, because its tests drive the real host:
+# VPinFE's development branch is checked out, this repository goes into its extensions/
+# folder (the other included extension beside it), and VPinFE's runner runs the tests this
+# repository carries along with the checks VPinFE holds every extension to.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out VPinFE
+        uses: actions/checkout@v5
+        with:
+          repository: vpinfe/vpinfe
+          ref: vpinfe-3.0
+
+      - name: Check out this extension
+        uses: actions/checkout@v5
+        with:
+          path: extensions/vpinplay
+
+      - name: Check out the other included extension
+        uses: actions/checkout@v5
+        with:
+          repository: vpinfe/extension-library-importer
+          path: extensions/library_importer
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run this extension's tests and VPinFE's checks over it
+        run: python -m tests tests/invariants extensions/vpinplay/tests
+
+      - name: Lint (blocking)
+        run: ruff check extensions/vpinplay --output-format=github
+
+      - name: Type check
+        run: mypy --follow-imports=silent extensions/vpinplay
